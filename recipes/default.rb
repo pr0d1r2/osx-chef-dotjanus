@@ -28,3 +28,9 @@ git "#{ENV['HOME']}/.janus" do
   repository 'git@github.com:pr0d1r2/dotjanus.git'
   user node['current_user']
 end
+
+cookbook_file "#{node['etc']['passwd'][node['current_user']]['dir']}/.vimrc.after" do
+  source "vimrc.after"
+  owner node['current_user']
+  mode "0600"
+end
