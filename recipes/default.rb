@@ -24,13 +24,21 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-git "#{ENV['HOME']}/.janus" do
-  repository 'git@github.com:pr0d1r2/dotjanus.git'
-  user node['current_user']
+if node['user'] && node['user']['id']
+  user_name = node['user']['id']
+  home_dir = Etc.getpwnam(user_name).dir
+else
+  user_name = node['current_user']
+  home_dir = node['etc']['passwd'][user_name]['dir']
 end
 
-cookbook_file "#{node['etc']['passwd'][node['current_user']]['dir']}/.vimrc.after" do
+git "#{home_dir}/.janus" do
+  repository 'git@github.com:pr0d1r2/dotjanus.git'
+  user user_name
+end
+
+cookbook_file "#{home_dir}/.vimrc.after" do
   source "vimrc.after"
-  owner node['current_user']
+  owner user_name
   mode "0600"
 end
